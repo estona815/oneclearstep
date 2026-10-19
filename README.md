@@ -33,7 +33,7 @@ python3 oneclearstep.py mark my-plan.jsonl booking done --context "User checked 
 python3 oneclearstep.py next my-plan.jsonl --json
 ```
 
-CLI state updates take an exclusive file lock, check the expected revision, append an operation with a caller-provided ID, and flush/fsync the file. Repeating the same ID and content does not append a second event. Reusing an ID with different content or using a stale revision is rejected. A torn final line or hash mismatch refuses further writes. On an interrupted/erroring write, read the journal before retrying and reuse the original operation ID. Do not manually truncate or repair an uncertain journal. Initial creation refuses an existing path. Direct journal symlinks and special files are rejected.
+CLI state updates take an exclusive file lock, check the expected revision, append an operation with a caller-provided ID, and flush/fsync the file. Repeating the same ID and content does not append a second event. Reusing an ID with different content or using a stale revision is rejected. A torn final line or hash mismatch refuses further writes. On an interrupted/erroring write, read the journal before retrying and reuse the original operation ID. Do not manually truncate or repair an uncertain journal. Initial creation refuses an existing path. Direct input/journal symlinks and special files are rejected. Files are opened nonblocking before their type is inspected, so a FIFO without a writer is refused rather than waiting. Plan input is read with a 2 MiB limit before JSON parsing; oversized and excessively nested JSON are refused without creating a journal.
 
 ## Validation
 
@@ -42,7 +42,7 @@ python3 -m unittest -v test_oneclearstep
 node test_engine.mjs
 ```
 
-Ten Python tests include real competing processes, stale revisions, duplicate operations, reopened prerequisites, invalid graphs, torn/tampered journals and symlink refusal. Eleven JavaScript checks include a known SHA-256 answer, exact Python/browser decision agreement, hash-chain tamper detection, reset history, dependencies and invalid structures.
+Thirteen Python tests include real competing processes, stale revisions, duplicate operations, reopened prerequisites, invalid graphs, torn/tampered journals and symlink refusal. Eleven JavaScript checks include a known SHA-256 answer, exact Python/browser decision agreement, hash-chain tamper detection, reset history, dependencies and invalid structures.
 
 Actual browser checks exercised state changes, a second stale tab, new plans, dependency-bearing task creation, download/import, and persistence after reload. A 390 CSS-pixel iframe was checked for narrow layout; this was not a physical-device, screen-reader or accessibility certification test.
 

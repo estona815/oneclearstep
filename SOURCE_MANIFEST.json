@@ -4,18 +4,18 @@
   "files": [
     {
       "path": "README.md",
-      "bytes": 5712,
-      "sha256": "2ca219438b1f787a29969f6bb304f602b12b0d3a2f74475b4d6c9c55bea2bdc8"
+      "bytes": 5980,
+      "sha256": "ff7865442fefef208c56cda3dbbed55cd7b41b45a4167e34f4aa77e85830ef10"
     },
     {
       "path": "oneclearstep.py",
-      "bytes": 10733,
-      "sha256": "3bc7f7bd14b4a9dd463b34483a5479838d40657f08c11904940f55c3f299b6d6"
+      "bytes": 11023,
+      "sha256": "649cb0bd2ca2e1703fb9186bb38622b44a52b181f7d815a4e0b36c416e96843f"
     },
     {
       "path": "test_oneclearstep.py",
-      "bytes": 5176,
-      "sha256": "ee2dd3f740d073a7cda428442405070710b0820d82a19d92e0c1956c59691f69"
+      "bytes": 7416,
+      "sha256": "91e8aff6315bfabd478d6a3ac4dcc1ba857cd341c063a279a88f42c8ce99a0b0"
     },
     {
       "path": "test_engine.mjs",
@@ -85,5 +85,6 @@
     "private conversations",
     "QA helper",
     "design reference"
-  ]
+  ],
+  "revision": "v002 input boundary fix"
 }

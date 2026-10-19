@@ -9,7 +9,6 @@ import fcntl
 import hashlib
 import json
 import os
-from pathlib import Path
 import re
 import stat
 import sys
@@ -134,11 +133,21 @@ def replay(raw):
 
 
 def open_regular(path, flags):
-    fd = os.open(path, flags | os.O_NOFOLLOW, 0o600)
+    # Opening a read-only FIFO can block before fstat gets to reject it.
+    # Regular files ignore O_NONBLOCK; special files are never read below.
+    fd = os.open(path, flags | os.O_NOFOLLOW | os.O_NONBLOCK, 0o600)
     if not stat.S_ISREG(os.fstat(fd).st_mode):
         os.close(fd)
-        raise ValueError('Journal must be a regular file')
+        raise ValueError('Path must be a regular file')
     return fd
+
+
+def read_plan(path):
+    fd = open_regular(path, os.O_RDONLY)
+    with os.fdopen(fd, 'rb') as stream:
+        raw = stream.read(MAX_BYTES + 1)
+    require(0 < len(raw) <= MAX_BYTES, 'Plan is empty or too large')
+    return parse_json(raw)
 
 
 def initialize(path, plan):
@@ -197,9 +206,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.command == 'init':
-            raw = Path(args.plan).read_bytes()
-            require(len(raw) <= MAX_BYTES, 'Plan too large')
-            initialize(args.journal, parse_json(raw))
+            initialize(args.journal, read_plan(args.plan))
             print('Created local journal; revision 0. No external action performed.')
         elif args.command == 'mark':
             result = update(args.journal, args.task, args.status, args.context, args.op_id, args.expected_revision)
@@ -217,7 +224,7 @@ def main(argv=None):
                 print(n['context'] or 'No context recorded.')
                 print(result['boundary'])
         return 0
-    except (ValueError, OSError, UnicodeError) as error:
+    except (ValueError, OSError, UnicodeError, RecursionError) as error:
         print('Error: ' + str(error), file=sys.stderr)
         return 2
 

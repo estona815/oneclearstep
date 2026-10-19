@@ -1,7 +1,10 @@
 import copy
 import json
 import multiprocessing
+import os
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -101,6 +104,46 @@ class ResumeTests(unittest.TestCase):
     def test_duplicate_json_keys_refused(self):
         with self.assertRaisesRegex(ValueError, 'Duplicate JSON key'):
             app.parse_json('{"title":"a","title":"b"}')
+
+    def test_nonregular_inputs_refused_without_waiting(self):
+        fifo = self.path.parent / 'input.fifo'
+        os.mkfifo(fifo, 0o600)
+        targets = [fifo, self.path.parent]
+        if Path('/dev/zero').exists():
+            targets.append(Path('/dev/zero'))
+        script = str(Path(app.__file__).resolve())
+        for target in targets:
+            for command in [('next', str(target)),
+                            ('init', str(target), str(self.path.parent / 'not-created.jsonl'))]:
+                with self.subTest(target=str(target), command=command[0]):
+                    result = subprocess.run([sys.executable, script, *command],
+                                            capture_output=True, text=True, timeout=2)
+                    self.assertEqual(result.returncode, 2)
+                    self.assertIn('regular file', result.stderr)
+                    self.assertNotIn('Traceback', result.stderr)
+        self.assertFalse((self.path.parent / 'not-created.jsonl').exists())
+
+    def test_oversized_plan_refused_before_journal_creation(self):
+        source = self.path.parent / 'oversized.json'
+        source.write_bytes(b' ' * (app.MAX_BYTES + 1))
+        target = self.path.parent / 'not-created.jsonl'
+        result = subprocess.run([sys.executable, str(Path(app.__file__).resolve()),
+                                 'init', str(source), str(target)],
+                                capture_output=True, text=True, timeout=2)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('too large', result.stderr)
+        self.assertFalse(target.exists())
+
+    def test_deep_json_refused_without_traceback_or_output(self):
+        source = self.path.parent / 'deep.json'
+        source.write_text('[' * 2000 + '0' + ']' * 2000)
+        target = self.path.parent / 'not-created.jsonl'
+        result = subprocess.run([sys.executable, str(Path(app.__file__).resolve()),
+                                 'init', str(source), str(target)],
+                                capture_output=True, text=True, timeout=2)
+        self.assertEqual(result.returncode, 2)
+        self.assertNotIn('Traceback', result.stderr)
+        self.assertFalse(target.exists())
 
 
 if __name__ == '__main__': unittest.main()
