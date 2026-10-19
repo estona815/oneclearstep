@@ -1,0 +1,100 @@
+{
+  "schema": "oneclearstep/browser-v1",
+  "initial_plan": {
+    "schema": "oneclearstep/plan-v1",
+    "title": "Community workshop",
+    "tasks": [
+      {
+        "id": "request",
+        "title": "Request room",
+        "depends_on": [],
+        "status": "done",
+        "context": "Booking request sent.",
+        "priority": 80
+      },
+      {
+        "id": "booking",
+        "title": "Confirm room booking",
+        "depends_on": [
+          "request"
+        ],
+        "status": "uncertain",
+        "context": "Booking request sent. No confirmation recorded.",
+        "priority": 100
+      },
+      {
+        "id": "invites",
+        "title": "Send invitations",
+        "depends_on": [
+          "booking"
+        ],
+        "status": "pending",
+        "context": "Before sending invitations, check whether the booking actually went through.",
+        "priority": 90
+      },
+      {
+        "id": "agenda",
+        "title": "Prepare agenda",
+        "depends_on": [],
+        "status": "pending",
+        "context": "Outline a short workshop agenda.",
+        "priority": 50
+      }
+    ]
+  },
+  "events": [
+    {
+      "revision": 1,
+      "op_id": "synthetic-seed",
+      "kind": "state",
+      "payload": {
+        "task_id": "booking",
+        "status": "uncertain",
+        "context": "Booking request sent. No confirmation recorded."
+      },
+      "prev_hash": "1095f1dde7fdd60047feeebb8b2a7fcea64d5fc0e87aaef0de55a22007c8c018",
+      "hash": "809406e15ff92733a90a2ac379254620f366c35257a7c4b2da8b88ebeae5c3e4"
+    },
+    {
+      "revision": 2,
+      "op_id": "0e2bfcea-78df-4b66-be3a-b731a4406abe",
+      "kind": "state",
+      "payload": {
+        "task_id": "booking",
+        "status": "done",
+        "context": "Booking request sent. No confirmation recorded."
+      },
+      "prev_hash": "809406e15ff92733a90a2ac379254620f366c35257a7c4b2da8b88ebeae5c3e4",
+      "hash": "85dbcfac806cdca834ef65ce5673ecbbad263062320339a82211ed2dcad318ef"
+    },
+    {
+      "revision": 3,
+      "op_id": "6af45d1a-dc8d-4b84-ad6e-9f7b96fac0f8",
+      "kind": "state",
+      "payload": {
+        "task_id": "booking",
+        "status": "uncertain",
+        "context": "Booking request sent. No confirmation recorded."
+      },
+      "prev_hash": "85dbcfac806cdca834ef65ce5673ecbbad263062320339a82211ed2dcad318ef",
+      "hash": "25926ca1eb374b2391c7d1e3300f309acd612e6aff510a9788afab4ed7d131a7"
+    },
+    {
+      "revision": 4,
+      "op_id": "79e7c44f-37fc-4fd0-bd7a-84d1370bc63f",
+      "kind": "add",
+      "payload": {
+        "id": "t-7e3d386b-8b54-489a-b3ea-a3391ac83e56",
+        "title": "Check captions",
+        "context": "Synthetic workshop task; check captions before sharing.",
+        "status": "pending",
+        "priority": 50,
+        "depends_on": [
+          "booking"
+        ]
+      },
+      "prev_hash": "25926ca1eb374b2391c7d1e3300f309acd612e6aff510a9788afab4ed7d131a7",
+      "hash": "48b9899565f5ca5c1f78cc64d8fd4d819e3144e283327c11176caba22dd21b3c"
+    }
+  ]
+}

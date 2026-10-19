@@ -1,0 +1,42 @@
+export const sample = {
+  "schema": "oneclearstep/plan-v1",
+  "title": "Community workshop",
+  "tasks": [
+    {
+      "id": "request",
+      "title": "Request room",
+      "depends_on": [],
+      "status": "done",
+      "context": "Booking request sent.",
+      "priority": 80
+    },
+    {
+      "id": "booking",
+      "title": "Confirm room booking",
+      "depends_on": [
+        "request"
+      ],
+      "status": "uncertain",
+      "context": "Booking request sent. No confirmation recorded.",
+      "priority": 100
+    },
+    {
+      "id": "invites",
+      "title": "Send invitations",
+      "depends_on": [
+        "booking"
+      ],
+      "status": "pending",
+      "context": "Before sending invitations, check whether the booking actually went through.",
+      "priority": 90
+    },
+    {
+      "id": "agenda",
+      "title": "Prepare agenda",
+      "depends_on": [],
+      "status": "pending",
+      "context": "Outline a short workshop agenda.",
+      "priority": 50
+    }
+  ]
+};
