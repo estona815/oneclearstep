@@ -105,6 +105,24 @@ class ResumeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Duplicate JSON key'):
             app.parse_json('{"title":"a","title":"b"}')
 
+    def test_unicode_separators_preserved_in_journal_strings(self):
+        plan = copy.deepcopy(self.plan)
+        plan['title'] = '연구\u2028계획'
+        plan['tasks'][0]['context'] = '첫 줄\u0085다음 줄'
+        path = self.path.parent / 'unicode.jsonl'
+        app.initialize(path, plan)
+        restored, revision, _, _ = app.read(path)
+        self.assertEqual(restored, plan)
+        self.assertEqual(revision, 0)
+        context = '확인\u2029완료\u2028보존\u0085기록'
+        app.update(path, 'booking', 'done', context, 'unicode-op', 0)
+        restored, revision, _, _ = app.read(path)
+        self.assertEqual(revision, 1)
+        self.assertEqual(next(t for t in restored['tasks'] if t['id'] == 'booking')['context'], context)
+        before = path.read_bytes()
+        self.assertTrue(app.update(path, 'booking', 'done', context, 'unicode-op', 0)['duplicate'])
+        self.assertEqual(path.read_bytes(), before)
+
     def test_nonregular_inputs_refused_without_waiting(self):
         fifo = self.path.parent / 'input.fifo'
         os.mkfifo(fifo, 0o600)

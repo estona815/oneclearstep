@@ -4,18 +4,18 @@
   "files": [
     {
       "path": "README.md",
-      "bytes": 6456,
-      "sha256": "39ef33b51784461c91421455de509b2adc96418ad486d802172b9e9198fdf83d"
+      "bytes": 6610,
+      "sha256": "68ae18e262cb9d15f189994967b1293bf6bfb6c6771b1e75e19f3cfa196d2dd7"
     },
     {
       "path": "oneclearstep.py",
-      "bytes": 11023,
-      "sha256": "649cb0bd2ca2e1703fb9186bb38622b44a52b181f7d815a4e0b36c416e96843f"
+      "bytes": 11102,
+      "sha256": "cfd7f7f8216eb81025da5291750a13605172065f92dcaf8acfc6be8984475150"
     },
     {
       "path": "test_oneclearstep.py",
-      "bytes": 7416,
-      "sha256": "91e8aff6315bfabd478d6a3ac4dcc1ba857cd341c063a279a88f42c8ce99a0b0"
+      "bytes": 8361,
+      "sha256": "d3ce3ff97ea2b4960c6bbb1bdf8e92156fe513c0a2375b686d17650907cca533"
     },
     {
       "path": "test_engine.mjs",
@@ -86,5 +86,5 @@
     "QA helper",
     "design reference"
   ],
-  "revision": "v004 task-state keyboard focus fix"
+  "revision": "v005: preserve Unicode separators inside LF-delimited CLI journal strings; 14 Python tests"
 }

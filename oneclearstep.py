@@ -110,7 +110,8 @@ def parse_json(raw):
 
 def replay(raw):
     require(0 < len(raw) <= MAX_BYTES and raw.endswith(b'\n'), 'Empty, oversized or incomplete journal')
-    lines = raw.decode('utf-8').splitlines()
+    # JSONL records end at LF, not Unicode separators inside JSON strings.
+    lines = raw.decode('utf-8').split('\n')[:-1]
     records = [parse_json(line) for line in lines]
     first = records[0]
     require(isinstance(first, dict) and set(first) == {'kind', 'plan', 'hash'} and first['kind'] == 'plan', 'Invalid journal header')

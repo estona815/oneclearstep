@@ -42,7 +42,7 @@ python3 -m unittest -v test_oneclearstep
 node test_engine.mjs
 ```
 
-Thirteen Python tests include real competing processes, stale revisions, duplicate operations, reopened prerequisites, invalid graphs, torn/tampered journals and symlink refusal. Eleven JavaScript checks include a known SHA-256 answer, exact Python/browser decision agreement, hash-chain tamper detection, reset history, dependencies and invalid structures.
+Fourteen Python tests include real competing processes, stale revisions, duplicate operations, reopened prerequisites, invalid graphs, torn/tampered journals, symlink refusal and Unicode separators inside journal strings. Eleven JavaScript checks include a known SHA-256 answer, exact Python/browser decision agreement, hash-chain tamper detection, reset history, dependencies and invalid structures. JSONL records are separated only at LF; Unicode line/paragraph separators in titles and context are preserved.
 
 Actual browser checks exercised state changes, a second stale tab, new plans, dependency-bearing task creation, download/import, and persistence after reload. A 390 CSS-pixel iframe was checked for narrow layout; this was not a physical-device, screen-reader or accessibility certification test.
 
