@@ -35,7 +35,7 @@ function render() {
     const li=document.createElement('li'), button=document.createElement('button'), title=document.createElement('span'), status=document.createElement('span');
     button.className='task-row'; button.setAttribute('aria-current',String(row.id===selected));
     title.textContent=row.title; status.textContent=stateLabel(row); status.className='task-state';
-    button.append(title,status); button.addEventListener('click',()=>{selected=row.id;render();}); li.append(button); $('tasks').append(li);
+    button.append(title,status); button.addEventListener('click',()=>{selected=row.id;render();$('focus').focus();}); li.append(button); $('tasks').append(li);
   }
   $('trail').replaceChildren();
   let trailPlan=clone(journal.initial_plan);const history=[];
