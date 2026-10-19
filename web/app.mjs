@@ -85,7 +85,7 @@ async function commit(kind,payload) {
     failed=true;
     if(error.message.includes('Revision conflict')) {stale=true;notice(error.message,true);} else fail(error);
     throw error;
-  } finally {busy=false;if(failed)selected=previousSelection;render();if(failed&&kind==='state')$('context').value=payload.context;}
+  } finally {busy=false;if(failed)selected=previousSelection;render();if(failed&&kind==='state')$('context').value=payload.context;if(!failed&&kind==='state')$('focus').focus();}
 }
 for(const status of ['done','pending','uncertain']) $(status).addEventListener('click',()=>{
   const payload={task_id:selected,status,context:$('context').value};commit('state',payload).catch(()=>{});

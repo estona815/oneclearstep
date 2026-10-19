@@ -61,4 +61,4 @@ Codex generated the new source, tests, synthetic examples, documentation and dra
 
 `web/qa-mobile.html` is a retained local QA helper, excluded from the public source packet. The design reference and operational evidence stay outside the runtime app.
 
-Keyboard check: pressing Enter on a task row moves focus to its labeled action section; the next Tab reaches Last context. Opening New plan focuses Plan name, and Escape returns focus to New plan without saving. These paths were exercised in the embedded desktop browser; no screen-reader or accessibility certification is claimed.
+Keyboard check: pressing Enter on a task row moves focus to its labeled action section; the next Tab reaches Last context. Successfully recording a task state also focuses the resulting action section, rather than losing focus when the saving controls are disabled. Opening New plan focuses Plan name, and Escape returns focus to New plan without saving. These paths were exercised in the embedded desktop browser; no screen-reader or accessibility certification is claimed.
