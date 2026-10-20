@@ -1,11 +1,11 @@
 {
   "project": "OneClearStep",
-  "created": "2026-10-19",
+  "created": "2026-10-21",
   "files": [
     {
       "path": "README.md",
-      "bytes": 6610,
-      "sha256": "68ae18e262cb9d15f189994967b1293bf6bfb6c6771b1e75e19f3cfa196d2dd7"
+      "bytes": 7194,
+      "sha256": "ae219da5a1ec02aed559f458d560c202104c2e9b4b761b24cc8e747b33fc6753"
     },
     {
       "path": "oneclearstep.py",
@@ -19,8 +19,8 @@
     },
     {
       "path": "test_engine.mjs",
-      "bytes": 3673,
-      "sha256": "7faf37a4a5568d06d94f4dc0360dfd54134ba8af7febf2b0360ef6272b0e3012"
+      "bytes": 5122,
+      "sha256": "29026ef757fda07084f38850ec810f66672e19081c56f192a1539ec8f02558e4"
     },
     {
       "path": "web/index.html",
@@ -34,8 +34,8 @@
     },
     {
       "path": "web/engine.mjs",
-      "bytes": 6154,
-      "sha256": "0342738c7426db2acd8948ef2501036f89bc181c1875598b7098a9d403cd417a"
+      "bytes": 6243,
+      "sha256": "21acd923082bf231fcd410db9274586461afd40dd2505de1856eeadc0da9025a"
     },
     {
       "path": "web/app.mjs",
@@ -86,5 +86,5 @@
     "QA helper",
     "design reference"
   ],
-  "revision": "v005: preserve Unicode separators inside LF-delimited CLI journal strings; 14 Python tests"
+  "revision": "v006 candidate: match imported plain-plan Unicode code-point limits to Python; 13 JavaScript checks including 36 boundary cases; 14 Python tests"
 }

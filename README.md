@@ -20,7 +20,7 @@ Open <http://127.0.0.1:8766/>. The first visit creates a clearly labeled synthet
 
 **New plan** creates a plan with a first task. **Add task** allows prerequisites and priority. Edit **Last context** before choosing a state to retain the note. **Export** downloads the browser journal. **Import** accepts a plain plan or validated browser journal and imports its current plan as a new local revision; imported history remains in the source file. Earlier browser history is retained. Clearing site data removes the browser copy, so export a copy when it matters.
 
-The browser limits plans to 100 tasks, 20 prerequisites per task, 500 history events and 2 MiB journal data. Unsupported safe-write capabilities or corrupt storage leave the application read-only. Two cooperating tabs use Web Locks, revision checks and a storage-change warning. These are same-origin browser controls, not a distributed or adversarial lock.
+The browser limits plans to 100 tasks, 20 prerequisites per task, 500 history events and 2 MiB journal data. Imported plain-plan title and context limits count Unicode code points, matching the Python validator: 160 for a plan title, 240 for a task title and 2000 for context. Native browser text inputs retain their more conservative UTF-16 input limits; importing or displaying a valid longer Unicode value does not truncate it. Unsupported safe-write capabilities or corrupt storage leave the application read-only. Two cooperating tabs use Web Locks, revision checks and a storage-change warning. These are same-origin browser controls, not a distributed or adversarial lock.
 
 ## Run the CLI
 
@@ -42,7 +42,7 @@ python3 -m unittest -v test_oneclearstep
 node test_engine.mjs
 ```
 
-Fourteen Python tests include real competing processes, stale revisions, duplicate operations, reopened prerequisites, invalid graphs, torn/tampered journals, symlink refusal and Unicode separators inside journal strings. Eleven JavaScript checks include a known SHA-256 answer, exact Python/browser decision agreement, hash-chain tamper detection, reset history, dependencies and invalid structures. JSONL records are separated only at LF; Unicode line/paragraph separators in titles and context are preserved.
+Fourteen Python tests include real competing processes, stale revisions, duplicate operations, reopened prerequisites, invalid graphs, torn/tampered journals, symlink refusal and Unicode separators inside journal strings. Thirteen JavaScript checks include a known SHA-256 answer, Python/browser decision agreement, hash-chain tamper detection, reset history, dependencies and invalid structures. The Unicode boundary check compares 36 ASCII, Korean, emoji and mixed-script field cases against Python; another check preserves supplementary Unicode context through append and replay. These checks do not prove equivalence for every possible Unicode or JSON input. JSONL records are separated only at LF; Unicode line/paragraph separators in titles and context are preserved.
 
 Actual browser checks exercised state changes, a second stale tab, new plans, dependency-bearing task creation, download/import, and persistence after reload. A 390 CSS-pixel iframe was checked for narrow layout; this was not a physical-device, screen-reader or accessibility certification test.
 
