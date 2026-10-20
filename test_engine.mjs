@@ -54,4 +54,17 @@ await check('C0 control-character policy agrees across all three text fields',()
   });
   assert.equal(plans.length,96);
 });
+await check('unpaired surrogates fail validation and writes in both clients',async()=>{
+  const malformed=['\ud800','\udfff','A\ud800B','A\udfffB','\ud800\ud800','\udfff\udfff','\udfff\ud800','😀\ud800'];
+  const values=[...malformed,'plain','한글','😀 𐐀 \ufffd'];
+  const fields=[(p,v)=>p.title=v,(p,v)=>p.tasks[0].title=v,(p,v)=>p.tasks[0].context=v];
+  const plans=[];
+  for(const set of fields) for(const value of values){const p=clone(sample);set(p,value);plans.push(p);}
+  const python=JSON.parse(execFileSync('python3',['-c','import json,sys,oneclearstep\nresults=[]\nfor p in json.load(sys.stdin):\n try:\n  oneclearstep.validate(p); results.append(True)\n except ValueError:\n  results.append(False)\nprint(json.dumps(results))'],{cwd:new URL('.',import.meta.url),input:JSON.stringify(plans),encoding:'utf8'}));
+  plans.forEach((p,i)=>{let accepted=true;try{validate(p);}catch{accepted=false;}assert.equal(accepted,i%values.length>=malformed.length);assert.equal(accepted,python[i]);if(!accepted)assert.throws(()=>createJournal(p));});
+  assert.equal(plans.length,33);
+  const journal=createJournal(sample),original=JSON.stringify(journal);
+  await assert.rejects(append(journal,{op_id:'invalid-context',kind:'state',payload:{task_id:sample.tasks[0].id,status:'uncertain',context:'\ud800'}},0));
+  assert.equal(JSON.stringify(journal),original);
+});
 console.log(passed+' checks passed');

@@ -4,8 +4,8 @@ const idPattern = /^[a-zA-Z0-9_-]{1,64}$/;
 export const clone = value => JSON.parse(JSON.stringify(value));
 export function require(ok, message) { if (!ok) throw new Error(message); }
 const exact = (value, keys) => value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).sort().join('|') === [...keys].sort().join('|');
-// Imported plain plans share Python's Unicode code-point limits, not UTF-16 units.
-function text(value, max) { return typeof value === 'string' && [...value].length <= max && !/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value); }
+// Count Unicode code points and reject unpaired UTF-16 surrogates before journaling.
+function text(value, max) { return typeof value === 'string' && [...value].length <= max && !/[\ud800-\udfff]/u.test(value) && !/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value); }
 export function validate(plan) {
   require(exact(plan, ['schema','title','tasks']) && plan.schema === SCHEMA && text(plan.title,160) && plan.title.trim(), 'Invalid plan title or schema.');
   require(Array.isArray(plan.tasks) && plan.tasks.length > 0 && plan.tasks.length <= 100, 'Use 1 to 100 tasks.');

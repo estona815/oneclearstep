@@ -4,23 +4,23 @@
   "files": [
     {
       "path": "README.md",
-      "bytes": 7624,
-      "sha256": "e0ab74553d3056a369c43b69e4bebe7e6d919f40e901760dcfdc396b8173f5f3"
+      "bytes": 7921,
+      "sha256": "746f2cc0c4f0c299a3caf33a170c91709bbd1def24a32bcd6ad6b90f6788c3cc"
     },
     {
       "path": "oneclearstep.py",
-      "bytes": 11104,
-      "sha256": "543ca4aba89111b6bcc67c98bd1ca29005b8c4fbaf0a6e99930bd2be7191fc14"
+      "bytes": 11219,
+      "sha256": "5ec84bb8585b03980d5464b3a0c72866bd18b9db45c2d0b959467676c41f4ed5"
     },
     {
       "path": "test_oneclearstep.py",
-      "bytes": 9196,
-      "sha256": "9e2f18113cd780f8639058b2e567cdd4feda07c048e0afe5d6a9693b90a4201c"
+      "bytes": 10716,
+      "sha256": "30d79a50b5acbc53fbd9df5586a040e401c3dd375cd05f29b480f31c6170ddb5"
     },
     {
       "path": "test_engine.mjs",
-      "bytes": 6075,
-      "sha256": "9215e6966355c930fcd4f41b98284f4ac70b98891d18c9f62d6f1847301eeba0"
+      "bytes": 7443,
+      "sha256": "d33b8fe1dd381259a4c4ecef23c055fc60bff2e0258a425c799ec60ce9609431"
     },
     {
       "path": "web/index.html",
@@ -34,8 +34,8 @@
     },
     {
       "path": "web/engine.mjs",
-      "bytes": 6243,
-      "sha256": "21acd923082bf231fcd410db9274586461afd40dd2505de1856eeadc0da9025a"
+      "bytes": 6280,
+      "sha256": "324eb6ad61ddf33ced3d232bb4828bf47e1406876ebdf7262ed2b22fcfde6111"
     },
     {
       "path": "web/app.mjs",
@@ -86,5 +86,5 @@
     "QA helper",
     "design reference"
   ],
-  "revision": "v007 candidate: Unicode code-point limits and CRLF/CR plain-plan interoperability; 15 Python tests, 14 JavaScript checks including 36 Unicode boundaries and 96 C0 field cases"
+  "revision": "v008 candidate: Unicode scalar validation before journal creation/update; 16 Python tests, 15 JavaScript checks; 33 malformed/valid Unicode field cases plus actual browser export to Python readback"
 }
