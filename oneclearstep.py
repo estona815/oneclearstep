@@ -34,7 +34,7 @@ def digest(value):
 
 def text(value, label, maximum):
     require(isinstance(value, str) and len(value) <= maximum, label + ' is invalid')
-    require(not any(ord(c) < 32 and c not in '\n\t' for c in value), label + ' contains control characters')
+    require(not any(ord(c) < 32 and c not in '\r\n\t' for c in value), label + ' contains control characters')
 
 
 def validate(plan):

@@ -40,4 +40,18 @@ await check('supplementary Unicode context survives journal append and replay',a
   const changed=await append(createJournal(plan),{op_id:'unicode-context',kind:'state',payload:{task_id:plan.tasks[0].id,status:'uncertain',context}},0);
   assert.equal((await replay(changed.journal)).plan.tasks[0].context,context);
 });
+await check('C0 control-character policy agrees across all three text fields',()=>{
+  const fields=[(p,v)=>p.title=v,(p,v)=>p.tasks[0].title=v,(p,v)=>p.tasks[0].context=v];
+  const plans=[];
+  for(const set of fields) for(let code=0;code<32;code++) {
+    const plan=clone(sample);set(plan,'A'+String.fromCharCode(code)+'B');plans.push(plan);
+  }
+  const python=JSON.parse(execFileSync('python3',['-c','import json,sys,oneclearstep\nresults=[]\nfor p in json.load(sys.stdin):\n try:\n  oneclearstep.validate(p); results.append(True)\n except ValueError:\n  results.append(False)\nprint(json.dumps(results))'],{cwd:new URL('.',import.meta.url),input:JSON.stringify(plans),encoding:'utf8'}));
+  plans.forEach((plan,i)=>{
+    let browser=true;try{validate(plan);}catch{browser=false;}
+    assert.equal(browser,python[i],`field ${Math.floor(i/32)}, C0 ${i%32}`);
+    assert.equal(browser,[9,10,13].includes(i%32));
+  });
+  assert.equal(plans.length,96);
+});
 console.log(passed+' checks passed');
