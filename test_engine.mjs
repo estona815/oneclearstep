@@ -22,4 +22,49 @@ await check('add task validates missing and cyclic dependencies',async()=>{const
 await check('reset preserves earlier history',async()=>{const plan=clone(sample);plan.title='New local plan';const reset=await append(first.journal,{op_id:'reset',kind:'reset',payload:plan},1);assert.equal(reset.journal.events.length,2);assert.equal((await replay(reset.journal)).plan.title,plan.title);assert.equal(reset.journal.initial_plan.title,'Community workshop');});
 await check('reopening a prerequisite blocks recorded-done descendants',async()=>{let changed=await append(first.journal,{op_id:'invites',kind:'state',payload:{task_id:'invites',status:'done',context:''}},1);changed=await append(changed.journal,{op_id:'reopen',kind:'state',payload:{task_id:'booking',status:'uncertain',context:''}},2);assert.equal(nextAction(changed.plan).tasks.find(t=>t.id==='invites').state,'waiting');});
 await check('untrusted titles are preserved as data and malformed structures rejected',()=>{const plan=clone(sample);plan.tasks[0].title='<img src=x onerror=alert(1)>';assert.equal(validate(plan).tasks[0].title,plan.tasks[0].title);plan.tasks.push(clone(plan.tasks[0]));assert.throws(()=>validate(plan),/duplicate/);});
+await check('Unicode field limits agree with Python at each boundary',()=>{
+  const fields=[['plan title',160,(p,v)=>p.title=v],['task title',240,(p,v)=>p.tasks[0].title=v],['context',2000,(p,v)=>p.tasks[0].context=v]];
+  let cases=0;
+  for(const [label,maximum,set] of fields) for(const alphabet of ['a','한','😀','A😀한']) for(const length of [maximum-1,maximum,maximum+1]) {
+    const plan=clone(sample);set(plan,[...alphabet.repeat(length)].slice(0,length).join(''));
+    const python=JSON.parse(execFileSync('python3',['-c','import json,sys,oneclearstep\np=json.load(sys.stdin)\ntry:\n oneclearstep.validate(p); ok=True\nexcept ValueError:\n ok=False\nprint(json.dumps(ok))'],{cwd:new URL('.',import.meta.url),input:JSON.stringify(plan),encoding:'utf8'}));
+    let browser=true;try{validate(plan);}catch{browser=false;}
+    assert.equal(browser,python,`${label}: ${length} code points from ${alphabet}`);
+    assert.equal(browser,length<=maximum);cases++;
+  }
+  assert.equal(cases,36);
+});
+await check('supplementary Unicode context survives journal append and replay',async()=>{
+  const plan=clone(sample),context='Synthetic headphone markers: '+'🎧'.repeat(1100);
+  plan.tasks[0].context=context;
+  const changed=await append(createJournal(plan),{op_id:'unicode-context',kind:'state',payload:{task_id:plan.tasks[0].id,status:'uncertain',context}},0);
+  assert.equal((await replay(changed.journal)).plan.tasks[0].context,context);
+});
+await check('C0 control-character policy agrees across all three text fields',()=>{
+  const fields=[(p,v)=>p.title=v,(p,v)=>p.tasks[0].title=v,(p,v)=>p.tasks[0].context=v];
+  const plans=[];
+  for(const set of fields) for(let code=0;code<32;code++) {
+    const plan=clone(sample);set(plan,'A'+String.fromCharCode(code)+'B');plans.push(plan);
+  }
+  const python=JSON.parse(execFileSync('python3',['-c','import json,sys,oneclearstep\nresults=[]\nfor p in json.load(sys.stdin):\n try:\n  oneclearstep.validate(p); results.append(True)\n except ValueError:\n  results.append(False)\nprint(json.dumps(results))'],{cwd:new URL('.',import.meta.url),input:JSON.stringify(plans),encoding:'utf8'}));
+  plans.forEach((plan,i)=>{
+    let browser=true;try{validate(plan);}catch{browser=false;}
+    assert.equal(browser,python[i],`field ${Math.floor(i/32)}, C0 ${i%32}`);
+    assert.equal(browser,[9,10,13].includes(i%32));
+  });
+  assert.equal(plans.length,96);
+});
+await check('unpaired surrogates fail validation and writes in both clients',async()=>{
+  const malformed=['\ud800','\udfff','A\ud800B','A\udfffB','\ud800\ud800','\udfff\udfff','\udfff\ud800','😀\ud800'];
+  const values=[...malformed,'plain','한글','😀 𐐀 \ufffd'];
+  const fields=[(p,v)=>p.title=v,(p,v)=>p.tasks[0].title=v,(p,v)=>p.tasks[0].context=v];
+  const plans=[];
+  for(const set of fields) for(const value of values){const p=clone(sample);set(p,value);plans.push(p);}
+  const python=JSON.parse(execFileSync('python3',['-c','import json,sys,oneclearstep\nresults=[]\nfor p in json.load(sys.stdin):\n try:\n  oneclearstep.validate(p); results.append(True)\n except ValueError:\n  results.append(False)\nprint(json.dumps(results))'],{cwd:new URL('.',import.meta.url),input:JSON.stringify(plans),encoding:'utf8'}));
+  plans.forEach((p,i)=>{let accepted=true;try{validate(p);}catch{accepted=false;}assert.equal(accepted,i%values.length>=malformed.length);assert.equal(accepted,python[i]);if(!accepted)assert.throws(()=>createJournal(p));});
+  assert.equal(plans.length,33);
+  const journal=createJournal(sample),original=JSON.stringify(journal);
+  await assert.rejects(append(journal,{op_id:'invalid-context',kind:'state',payload:{task_id:sample.tasks[0].id,status:'uncertain',context:'\ud800'}},0));
+  assert.equal(JSON.stringify(journal),original);
+});
 console.log(passed+' checks passed');

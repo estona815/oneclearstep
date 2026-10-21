@@ -26,6 +26,46 @@ class ResumeTests(unittest.TestCase):
         self.path = Path(self.temp.name) / 'journal.jsonl'
         app.initialize(self.path, self.plan)
 
+    def test_unpaired_surrogates_rejected_before_journal_creation_or_update(self):
+        malformed = ['\ud800', '\udfff', 'A\ud800B', 'A\udfffB',
+                     '\ud800\ud800', '\udfff\udfff', '\udfff\ud800', '😀\ud800']
+        for field in ('plan_title', 'task_title', 'context'):
+            for value in malformed:
+                plan = copy.deepcopy(self.plan)
+                if field == 'plan_title':
+                    plan['title'] = value
+                else:
+                    plan['tasks'][0]['title' if field == 'task_title' else 'context'] = value
+                with self.subTest(field=field, value=ascii(value)):
+                    with self.assertRaisesRegex(ValueError, 'surrogate'):
+                        app.validate(plan)
+                    destination = Path(self.temp.name) / 'rejected.jsonl'
+                    with self.assertRaisesRegex(ValueError, 'surrogate'):
+                        app.initialize(destination, plan)
+                    self.assertFalse(destination.exists())
+        original = self.path.read_bytes()
+        with self.assertRaisesRegex(ValueError, 'surrogate'):
+            app.update(self.path, self.plan['tasks'][0]['id'], 'uncertain', '\ud800', 'invalid-context', 0)
+        self.assertEqual(self.path.read_bytes(), original)
+        valid = copy.deepcopy(self.plan)
+        valid['tasks'][0]['context'] = '한글 😀 𐐀 \ufffd'
+        app.validate(valid)
+        self.assertEqual(app.digest(valid), app.digest(json.loads(json.dumps(valid))))
+
+    def test_crlf_and_cr_context_survive_plan_import_and_journal_update(self):
+        plan = copy.deepcopy(self.plan)
+        context = 'Windows note\r\n한글 🎧 second line\rThird line'
+        plan['tasks'][0]['context'] = context
+        source = Path(self.temp.name) / 'windows-plan.json'
+        source.write_text(json.dumps(plan, ensure_ascii=False), encoding='utf-8')
+        loaded = app.read_plan(source)
+        path = Path(self.temp.name) / 'windows-journal.jsonl'
+        app.initialize(path, loaded)
+        self.assertEqual(app.read(path)[0]['tasks'][0]['context'], context)
+        changed_context = context + '\r\nFollow-up retained.'
+        app.update(path, plan['tasks'][0]['id'], 'uncertain', changed_context, 'crlf-edit', 0)
+        self.assertEqual(app.read(path)[0]['tasks'][0]['context'], changed_context)
+
     def test_uncertain_precedes_ready_and_blocks_invites(self):
         result = app.next_action(self.plan)
         self.assertEqual(result['next']['id'], 'booking')

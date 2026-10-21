@@ -1,26 +1,26 @@
 {
   "project": "OneClearStep",
-  "created": "2026-10-19",
+  "created": "2026-10-21",
   "files": [
     {
       "path": "README.md",
-      "bytes": 6610,
-      "sha256": "68ae18e262cb9d15f189994967b1293bf6bfb6c6771b1e75e19f3cfa196d2dd7"
+      "bytes": 7921,
+      "sha256": "746f2cc0c4f0c299a3caf33a170c91709bbd1def24a32bcd6ad6b90f6788c3cc"
     },
     {
       "path": "oneclearstep.py",
-      "bytes": 11102,
-      "sha256": "cfd7f7f8216eb81025da5291750a13605172065f92dcaf8acfc6be8984475150"
+      "bytes": 11219,
+      "sha256": "5ec84bb8585b03980d5464b3a0c72866bd18b9db45c2d0b959467676c41f4ed5"
     },
     {
       "path": "test_oneclearstep.py",
-      "bytes": 8361,
-      "sha256": "d3ce3ff97ea2b4960c6bbb1bdf8e92156fe513c0a2375b686d17650907cca533"
+      "bytes": 10716,
+      "sha256": "30d79a50b5acbc53fbd9df5586a040e401c3dd375cd05f29b480f31c6170ddb5"
     },
     {
       "path": "test_engine.mjs",
-      "bytes": 3673,
-      "sha256": "7faf37a4a5568d06d94f4dc0360dfd54134ba8af7febf2b0360ef6272b0e3012"
+      "bytes": 7443,
+      "sha256": "d33b8fe1dd381259a4c4ecef23c055fc60bff2e0258a425c799ec60ce9609431"
     },
     {
       "path": "web/index.html",
@@ -34,8 +34,8 @@
     },
     {
       "path": "web/engine.mjs",
-      "bytes": 6154,
-      "sha256": "0342738c7426db2acd8948ef2501036f89bc181c1875598b7098a9d403cd417a"
+      "bytes": 6280,
+      "sha256": "324eb6ad61ddf33ced3d232bb4828bf47e1406876ebdf7262ed2b22fcfde6111"
     },
     {
       "path": "web/app.mjs",
@@ -86,5 +86,5 @@
     "QA helper",
     "design reference"
   ],
-  "revision": "v005: preserve Unicode separators inside LF-delimited CLI journal strings; 14 Python tests"
+  "revision": "v008 candidate: Unicode scalar validation before journal creation/update; 16 Python tests, 15 JavaScript checks; 33 malformed/valid Unicode field cases plus actual browser export to Python readback"
 }
