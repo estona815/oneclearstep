@@ -1,0 +1,51 @@
+{
+  "checked_at": "2026-10-21T11:01:49.952482+00:00",
+  "source_files_sha256": {
+    "oneclearstep.py": "5ec84bb8585b03980d5464b3a0c72866bd18b9db45c2d0b959467676c41f4ed5",
+    "web/engine.mjs": "324eb6ad61ddf33ced3d232bb4828bf47e1406876ebdf7262ed2b22fcfde6111"
+  },
+  "graphs": 64,
+  "status_assignments_per_graph": 81,
+  "priority_profiles": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      2,
+      3,
+      4
+    ],
+    [
+      100,
+      0,
+      100,
+      0
+    ]
+  ],
+  "plans_per_engine": 15552,
+  "engines": [
+    "Python",
+    "JavaScript"
+  ],
+  "comparisons_passed": 31104,
+  "properties": [
+    "transitive prerequisite satisfaction",
+    "reopened prerequisites block stale done records",
+    "direct blocker lists",
+    "uncertain before ready",
+    "descending priority",
+    "stable task-order ties",
+    "completion iff all tasks effectively done"
+  ],
+  "oracle": "Independent transitive-closure matrix; production engines recurse over prerequisite IDs",
+  "result_sha256": "94c68f9c923f4b8f292acf313d1ed64638b20a8eb2dbeb6c53ffc440c5ad600f",
+  "limitations": [
+    "Four ordered tasks and forward-edge DAGs only; not all labeled graphs or task counts.",
+    "No browser UI or concurrent-storage behavior covered by this audit.",
+    "No claim that recorded task states verify external completion."
+  ]
+}
